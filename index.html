@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Panel Notifier</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="simulator-wrapper">
+        <!-- Panel Lateral Izquierdo: Dispositivos -->
+        <div class="side-panel">
+            <h3>DISPOSITIVOS</h3>
+            <div class="interactive-sensors">
+                <!-- Dispositivo 1: Módulo Conexión -->
+                <div class="sensor-module">
+                    <div class="sensor-graphic module-box">
+                        <div class="module-led"></div>
+                        <span class="icon" style="font-size: 14px;">🔌</span>
+                    </div>
+                    <div class="sensor-controls">
+                    <span class="sensor-name">Nuevo Dispositivo</span>
+                    <select id="new-device-type" class="device-select">
+                        <option value="PHOTO SMOKE">Humo  </option>
+                        <option value="HEAT DETECTOR">Calor Term </option>
+                        <option value="PULL STATION">Est. Manual </option>
+                    </select>
+                        <button class="trigger-btn device-btn" id="btn-sim-connect">CONECTAR</button>
+                    </div>
+                </div>
+                <!-- Dispositivo 2: Sensor Falla -->
+                <div class="sensor-module">
+                    <div class="sensor-graphic dome">
+                        <div class="dome-center"></div>
+                        <span class="icon" style="position:absolute; top: -5px; font-size: 18px; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">✂️</span>
+                    </div>
+                    <div class="sensor-controls">
+                        <span class="sensor-name">Nodo 12 (Falla)</span>
+                        <button class="trigger-btn trouble-btn" id="btn-sim-disconnect">DESCONECTAR</button>
+                    </div>
+                </div>
+                <!-- Dispositivo 3: Sensor Sucio -->
+                <div class="sensor-module">
+                    <div class="sensor-graphic dome dirty">
+                        <div class="dome-center"></div>
+                        <span class="dust-fx">🌫️</span>
+                    </div>
+                    <div class="sensor-controls">
+                        <span class="sensor-name">Nodo 08 (Sucio)</span>
+                        <button class="trigger-btn dirty-btn" id="btn-sim-dirty">ENSUCIAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="panel-chassis">
+        <div class="front-panel">
+            <div class="header">
+                <div class="logo-area">
+                    <span class="notifier-logo">NOTIFIER</span>
+                    <span class="honeywell-text">by Honeywell</span>
+                </div>
+            </div>
+
+            <div class="lcd-display-bezel">
+                <div class="lcd-display">
+                    <div class="lcd-text" id="lcd-text">
+                        80-character (2x40) Liquid Crystal Display (LCD)
+                        <span class="cursor"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-section">
+                <div class="vertical-leds-container">
+                    <div class="led-row"><div class="led led-red" id="led-controls-active"></div><span class="led-label">CONTROLS ACTIVE</span></div>
+                    <div class="led-row"><div class="led led-red" id="led-power"></div><span class="led-label">POWER</span></div>
+                    <div class="led-row"><div class="led led-red" id="led-pre-discharge"></div><span class="led-label">PRE-DISCHARGE</span></div>
+                    <div class="led-row"><div class="led led-red" id="led-discharge"></div><span class="led-label">DISCHARGE</span></div>
+                    <div class="led-row"><div class="led led-red" id="led-abort-active"></div><span class="led-label">ABORT ACTIVE</span></div>
+                </div>
+                <div class="horizontal-leds-container">
+                    <div class="led-col"><div class="led led-red" id="led-fire-alarm"></div><span class="led-label">FIRE ALARM</span></div>
+                    <div class="led-col"><div class="led led-red" id="led-pre-alarm"></div><span class="led-label">PRE-ALARM</span></div>
+                    <div class="led-col"><div class="led led-red" id="led-security"></div><span class="led-label">SECURITY</span></div>
+                    <div class="led-col"><div class="led led-red" id="led-supervisory"></div><span class="led-label">SUPERVISORY</span></div>
+                    <div class="led-col"><div class="led led-red" id="led-system-trouble"></div><span class="led-label">SYSTEM TROUBLE</span></div>
+                    <div class="led-col"><div class="led led-red" id="led-signals-silenced"></div><span class="led-label">SIGNALS SILENCED</span></div>
+                    <div class="led-col"><div class="led led-red" id="led-point-disabled"></div><span class="led-label">POINT DISABLED</span></div>
+                </div>
+            </div>
+
+            <div class="main-buttons-container">
+                <button class="btn main-btn" id="btn-acknowledge">ACKNOWLEDGE SCROLL DISPLAY</button>
+                <button class="btn main-btn" id="btn-signal-silence">SIGNAL SILENCE</button>
+                <button class="btn main-btn" id="btn-system-reset">SYSTEM RESET</button>
+                <button class="btn main-btn" id="btn-drill">DRILL HOLD 2 SECONDS</button>
+                <button class="btn main-btn" id="btn-lamp-test">LAMP TEST</button>
+            </div>
+
+            <div class="keyboard-section">
+                <div class="keyboard-container">
+                    <div class="key-row key-row-numbers">
+                        <button class="btn key" data-key="1">1 !</button>
+                        <button class="btn key" data-key="2">2 @</button>
+                        <button class="btn key" data-key="3">3 #</button>
+                        <button class="btn key" data-key="4">4 $</button>
+                        <button class="btn key" data-key="5">5 %</button>
+                        <button class="btn key" data-key="6">6 ^</button>
+                        <button class="btn key" data-key="7">7 &</button>
+                        <button class="btn key" data-key="8">8 *</button>
+                        <button class="btn key" data-key="9">9 (</button>
+                        <button class="btn key" data-key="0">0 )</button>
+                    </div>
+                    <div class="key-row">
+                        <button class="btn key" data-key="q">Q</button>
+                        <button class="btn key" data-key="w">W</button>
+                        <button class="btn key" data-key="e">E</button>
+                        <button class="btn key" data-key="r">R</button>
+                        <button class="btn key" data-key="t">T</button>
+                        <button class="btn key" data-key="y">Y</button>
+                        <button class="btn key" data-key="u">U</button>
+                        <button class="btn key" data-key="i">I</button>
+                        <button class="btn key" data-key="o">O</button>
+                        <button class="btn key" data-key="p">P</button>
+                    </div>
+                    <div class="key-row">
+                        <button class="btn key" data-key="a">A</button>
+                        <button class="btn key" data-key="s">S</button>
+                        <button class="btn key" data-key="d">D</button>
+                        <button class="btn key" data-key="f">F</button>
+                        <button class="btn key" data-key="g">G</button>
+                        <button class="btn key" data-key="h">H</button>
+                        <button class="btn key" data-key="j">J</button>
+                        <button class="btn key" data-key="k">K</button>
+                        <button class="btn key" data-key="l">L</button>
+                    </div>
+                    <div class="key-row key-row-last-alpha">
+                        <div class="key-row-inner">
+                            <button class="btn key key-lower-case" id="btn-lower-case">Lower Case</button>
+                            <button class="btn key" data-key="z">Z</button>
+                            <button class="btn key" data-key="x">X</button>
+                            <button class="btn key" data-key="c">C</button>
+                            <button class="btn key" data-key="v">V</button>
+                            <button class="btn key" data-key="b">B</button>
+                            <button class="btn key" data-key="n">N</button>
+                            <button class="btn key" data-key="m">M</button>
+                            <button class="btn key key-space" data-key=" ">SPACE</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-keys">
+                        <button class="btn key key-nav-up" data-key="ArrowUp">&#8593;</button>
+                        <button class="btn key key-nav-left key-esc" data-key="Escape">ESC<br>&#8592;</button>
+                        <button class="btn key key-nav-down" data-key="ArrowDown">&#8595;</button>
+                        <button class="btn key key-nav-right" data-key="ArrowRight">&#8594;</button>
+                    </div>
+                    <button class="btn key key-enter" data-key="Enter">&#10515;</button>
+                </div>
+
+                <div class="function-section">
+                    <div class="function-keys-container">
+                        <div class="function-cols">
+                            <div class="func-col-labels">
+                                <span>DETECTOR</span>
+                                <span>MODULE</span>
+                                <span>OUTPUT</span>
+                                <span>BATTERY LEVELS</span>
+                            </div>
+                            <div class="func-col-keys">
+                                <button class="btn key" data-key="*">*</button>
+                                <button class="btn key" data-key="#">#</button>
+                                <button class="btn key" data-key="&">&</button>
+                                <button class="btn key" data-key="/">/</button>
+                            </div>
+                            <div class="func-col-labels-wide">
+                                <span class="label-with-key">NEXT SELECTION <span class="key-inline">+</span></span>
+                                <span class="label-with-key">PREVIOUS SELECTION <span class="key-inline">-</span></span>
+                                <span class="label-with-key">RECALL LAST ENTRY <span class="key-inline">(</span></span>
+                                <span class="label-with-key">INCREMENT NUMBER <span class="key-inline">)</span></span>
+                            </div>
+                            <div class="func-col-keys">
+                                <button class="btn key" data-key="+">+</button>
+                                <button class="btn key" data-key="-">-</button>
+                                <button class="btn key" data-key="(">(</button>
+                                <button class="btn key" data-key=")">)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-lock">
+                <div class="lock-cylinder"></div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Panel Lateral Derecho: Eventos -->
+        <div class="side-panel">
+            <h3>SIMULACIÓN FÍSICA</h3>
+            <div class="interactive-sensors">
+                <!-- Sensor 1: Humo -->
+                <div class="sensor-module" id="module-1">
+                    <div class="sensor-graphic dome">
+                        <div class="dome-center"></div>
+                        <div class="flame-fx">🔥</div>
+                    </div>
+                    <div class="sensor-controls">
+                        <span class="sensor-name">Z1: Humo Lab</span>
+                        <button class="trigger-btn" id="btn-trigger-1">🔥 INCENDIAR</button>
+                    </div>
+                </div>
+                <!-- Sensor 2: Calor -->
+                <div class="sensor-module" id="module-2">
+                    <div class="sensor-graphic dome heat">
+                        <div class="dome-center"></div>
+                        <div class="flame-fx">🔥</div>
+                    </div>
+                    <div class="sensor-controls">
+                        <span class="sensor-name">Z2: Calor Ofic</span>
+                        <button class="trigger-btn" id="btn-trigger-2">🔥 INCENDIAR</button>
+                    </div>
+                </div>
+                <!-- Sensor 3: Estación Manual -->
+                <div class="sensor-module" id="module-3">
+                    <div class="sensor-graphic pull-station">
+                        <div class="pull-handle">PULL</div>
+                        <div class="flame-fx">🔥</div>
+                    </div>
+                    <div class="sensor-controls">
+                        <span class="sensor-name">Z3: Est. Manual</span>
+                        <button class="trigger-btn" id="btn-trigger-3">✋ JALAR</button>
+                    </div>
+                </div>
+            </div>
+            <button class="sim-btn sim-trouble" id="btn-sim-trouble">
+                <span class="icon">⚠️</span> ACTIVAR FALLA
+            </button>
+            <button class="sim-btn sim-super" id="btn-sim-super">
+                <span class="icon">👁️</span> ACTIVAR SUPERVISIÓN
+            </button>
+            <button class="sim-btn sim-clear" id="btn-sim-clear">
+                <span class="icon">🧹</span> LIMPIAR EVENTOS
+            </button>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

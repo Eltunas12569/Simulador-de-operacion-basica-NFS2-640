@@ -1,0 +1,104 @@
+================================================================================
+               MANUAL DE PRUEBAS - SIMULADOR NOTIFIER NFS2-640
+================================================================================
+Este documento detalla el paso a paso para probar todas las funcionalidades 
+implementadas en el simulador interactivo del panel de incendio.
+
+--------------------------------------------------------------------------------
+1. PRUEBA DE BOTONES PRINCIPALES (PANEL FRONTAL)
+--------------------------------------------------------------------------------
+[ ] LAMP TEST (Prueba de Lámparas):
+    1. Presiona el botón "LAMP TEST".
+    2. Verifica que todos los LEDs del panel se enciendan.
+    3. Verifica que la pantalla LCD se llene de caracteres "###" para probar los píxeles.
+    4. Espera 2.5 segundos; el panel debe volver a la normalidad automáticamente.
+
+[ ] DRILL (Simulacro de Evacuación):
+    1. Presiona el botón "DRILL HOLD 2 SECONDS".
+    2. Verifica que el zumbador (buzzer) comience a pitar continuamente.
+    3. Verifica que el LED rojo de "FIRE ALARM" se encienda.
+    4. La pantalla debe mostrar "MANUAL DRILL ACTIVATED".
+
+[ ] ACKNOWLEDGE (Reconocer Evento):
+    1. Mientras el panel suena (por ejemplo, después del DRILL), presiona "ACKNOWLEDGE".
+    2. Verifica que el zumbador se silencie.
+    3. La pantalla debe cambiar a "EVENTS ACKNOWLEDGED".
+
+[ ] SIGNAL SILENCE (Silenciar Señales):
+    1. Con una alarma activa, presiona "SIGNAL SILENCE".
+    2. Verifica que se encienda el LED amarillo "SIGNALS SILENCED".
+    3. La pantalla mostrará "SIGNALS SILENCED".
+
+[ ] SYSTEM RESET (Restablecer Sistema):
+    1. Presiona "SYSTEM RESET".
+    2. Verifica que se limpie la pantalla ("SYSTEM RESET IN PROGRESS...").
+    3. Tras 3 segundos, el panel debe volver al estado "SYSTEM ALL SYSTEMS NORMAL".
+
+--------------------------------------------------------------------------------
+2. PRUEBA DE SIMULACIÓN FÍSICA (PANEL LATERAL DERECHO)
+--------------------------------------------------------------------------------
+[ ] INCENDIO (Fuego en Sensores):
+    1. Haz clic en "🔥 INCENDIAR" (Z1 o Z2) o "✋ JALAR" (Z3).
+    2. Observa la animación de fuego sobre el sensor.
+    3. El panel entrará en estado de FIRE ALARM, el zumbador sonará.
+
+[ ] MÚLTIPLES EVENTOS (Cola de Alarmas):
+    1. Activa un incendio en "Z1: Humo Lab".
+    2. Activa una falla con el botón "⚠️ ACTIVAR FALLA".
+    3. Reconoce ambas alarmas presionando "ACKNOWLEDGE".
+    4. Usa las flechas "Arriba" y "Abajo" del teclado del panel para scrollear.
+    5. Verifica que la pantalla alterne entre el evento de ALARMA y el de FALLA (Ej. 00001/00002).
+
+[ ] LIMPIEZA DE EVENTOS:
+    1. Presiona "🧹 LIMPIAR EVENTOS".
+    2. Verifica que las animaciones de fuego/humo desaparezcan.
+    3. El panel debe volver a la normalidad sin necesidad de hacer RESET.
+
+--------------------------------------------------------------------------------
+3. PRUEBA DE BASE DE DATOS Y DISPOSITIVOS (PANEL LATERAL IZQUIERDO)
+--------------------------------------------------------------------------------
+[ ] CONECTAR NUEVO DISPOSITIVO DINÁMICO:
+    1. En el panel izquierdo, selecciona "Calor Term" del menú desplegable.
+    2. Presiona "CONECTAR".
+    3. La pantalla del panel indicará "NEW DEVICE DETECTED" (Ej. L1D09 - HEAT DETECTOR).
+
+[ ] DESCONEXIÓN / SUCIO:
+    1. Presiona "DESCONECTAR" (Nodo 12) o "ENSUCIAR" (Nodo 08).
+    2. Verifica que el panel dispare una alarma de "SYSTEM TROUBLE" con el mensaje respectivo.
+
+--------------------------------------------------------------------------------
+4. PRUEBA DE MENÚS (NAVEGACIÓN INTERNA)
+--------------------------------------------------------------------------------
+Para entrar al menú, presiona la tecla "Enter" desde el estado normal.
+
+[ ] READ STATUS (Estado en Vivo):
+    1. Presiona "1" para ingresar a READ STATUS.
+    2. Usa las flechas "Arriba" y "Abajo" para navegar por la base de datos de sensores.
+    3. Verifica que se muestre el estado ("NORMAL" o "ALARM") y el valor ("0.0% / FT" o "85 C").
+    4. Debes ver al final de la lista el dispositivo nuevo que creaste en el paso 3.
+    5. Presiona "ESC" para volver.
+
+[ ] PROGRAMMING (Nivel de Seguridad):
+    1. Presiona "2" para ingresar a PROG.
+    2. Teclea una contraseña falsa y presiona Enter -> Mostrará "ACCESS DENIED".
+    3. Ingresa de nuevo y teclea "12345" + Enter -> Te dará acceso al menú Nivel 2.
+    4. Navega con los botones 1, 2 y 3 para ver los submenús de CBE, ZONES y TIMERS.
+    5. Presiona "ESC" para retroceder.
+
+[ ] HISTORY (Historial de Eventos):
+    1. Presiona "3" para ingresar a HISTORY.
+    2. Usa las flechas para leer los últimos eventos ocurridos con su hora exacta.
+
+--------------------------------------------------------------------------------
+5. PRUEBA DE COMANDOS DE CONSOLA (TECLADO ALFANUMÉRICO)
+--------------------------------------------------------------------------------
+Usa el teclado en pantalla o tu teclado físico para escribir en la pantalla normal:
+
+[ ] COMANDOS DE SISTEMA:
+    1. Escribe "FIRE" y presiona Enter -> Dispara incendio. (Haz RESET luego).
+    2. Escribe "PREALARM" -> Dispara pre-alarma.
+
+[ ] GESTIÓN DE BASE DE DATOS LOCAL:
+    1. Escribe "RENAME L1D01 LABORATORIO" -> Cambia el nombre del detector 1.
+    2. Escribe "DELETE L1D02" -> Elimina el detector 2 del sistema.
+    3. Escribe "FACTORY RESET" -> Borra todo y restaura los 5 dispositivos base de fábrica.
