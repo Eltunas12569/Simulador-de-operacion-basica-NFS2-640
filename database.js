@@ -6,11 +6,11 @@ const DB_KEY = 'notifier_devices_db';
 
 // Base de datos "de fábrica" (si es la primera vez que se abre el panel)
 const defaultDevices = [
-    { dir: "L1D01", tipo: "PHOTO SMOKE", etiqueta: "INTERIOR LAB", estado: "NORMAL", valor: "0.0% / FT" },
-    { dir: "L1D02", tipo: "HEAT DETECTOR", etiqueta: "MAIN OFFICES", estado: "NORMAL", valor: "25 C" },
-    { dir: "L1M03", tipo: "PULL STATION", etiqueta: "WAREHOUSE EXIT", estado: "NORMAL", valor: "NORMAL" },
-    { dir: "L1D08", tipo: "PHOTO SMOKE", etiqueta: "CORRIDOR 1", estado: "NORMAL", valor: "0.0% / FT" },
-    { dir: "L1M12", tipo: "CONTROL MOD", etiqueta: "AC SHUTDOWN", estado: "NORMAL", valor: "NORMAL" }
+    { dir: "L1D01", tipo: "PHOTO SMOKE", etiqueta: "LAB INTERIOR", estado: "NORMAL", valor: "0.0% / FT" },
+    { dir: "L1D02", tipo: "HEAT DETECTOR", etiqueta: "OFICINAS PRINCIPALES", estado: "NORMAL", valor: "25 C" },
+    { dir: "L1M03", tipo: "PULL STATION", etiqueta: "SALIDA ALMACÉN", estado: "NORMAL", valor: "NORMAL" },
+    { dir: "L1D08", tipo: "PHOTO SMOKE", etiqueta: "PASILLO 1", estado: "NORMAL", valor: "0.0% / FT" },
+    { dir: "L1M12", tipo: "CONTROL MOD", etiqueta: "APAGADA CA", estado: "NORMAL", valor: "NORMAL" }
 ];
 
 window.db = {

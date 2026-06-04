@@ -7,32 +7,32 @@ implementadas en el simulador interactivo del panel de incendio.
 --------------------------------------------------------------------------------
 1. PRUEBA DE BOTONES PRINCIPALES (PANEL FRONTAL)
 --------------------------------------------------------------------------------
-[ ] LAMP TEST (Prueba de Lámparas):
-    1. Presiona el botón "LAMP TEST".
+[ ] PRUEBA LÁMPARAS:
+    1. Presiona el botón "PRUEBA LÁMPARAS".
     2. Verifica que todos los LEDs del panel se enciendan.
     3. Verifica que la pantalla LCD se llene de caracteres "###" para probar los píxeles.
     4. Espera 2.5 segundos; el panel debe volver a la normalidad automáticamente.
 
-[ ] DRILL (Simulacro de Evacuación):
-    1. Presiona el botón "DRILL HOLD 2 SECONDS".
+[ ] SIMULACRO (2 SEGUNDOS):
+    1. Presiona el botón "SIMULACRO 2 SEGUNDOS".
     2. Verifica que el zumbador (buzzer) comience a pitar continuamente.
-    3. Verifica que el LED rojo de "FIRE ALARM" se encienda.
-    4. La pantalla debe mostrar "MANUAL DRILL ACTIVATED".
+    3. Verifica que el LED rojo de "ALARMA INCENDIO" se encienda.
+    4. La pantalla debe mostrar "SIMULACRO MANUAL ACTIVADO".
 
-[ ] ACKNOWLEDGE (Reconocer Evento):
-    1. Mientras el panel suena (por ejemplo, después del DRILL), presiona "ACKNOWLEDGE".
+[ ] RECONOCER PANTALLA:
+    1. Mientras el panel suena (por ejemplo, después del SIMULACRO), presiona "RECONOCER PANTALLA".
     2. Verifica que el zumbador se silencie.
-    3. La pantalla debe cambiar a "EVENTS ACKNOWLEDGED".
+    3. La pantalla debe cambiar a "EVENTOS RECONOCIDOS".
 
-[ ] SIGNAL SILENCE (Silenciar Señales):
-    1. Con una alarma activa, presiona "SIGNAL SILENCE".
-    2. Verifica que se encienda el LED amarillo "SIGNALS SILENCED".
-    3. La pantalla mostrará "SIGNALS SILENCED".
+[ ] SILENCIAR SEÑALES:
+    1. Con una alarma activa, presiona "SILENCIAR SEÑALES".
+    2. Verifica que se encienda el LED "SEÑALES SILENCIADAS".
+    3. La pantalla mostrará "SEÑALES SILENCIADAS".
 
-[ ] SYSTEM RESET (Restablecer Sistema):
-    1. Presiona "SYSTEM RESET".
-    2. Verifica que se limpie la pantalla ("SYSTEM RESET IN PROGRESS...").
-    3. Tras 3 segundos, el panel debe volver al estado "SYSTEM ALL SYSTEMS NORMAL".
+[ ] REINICIAR SISTEMA:
+    1. Presiona "REINICIAR SISTEMA".
+    2. Verifica que se limpie la pantalla ("REINICIO DEL SISTEMA EN PROGRESO...").
+    3. Tras 3 segundos, el panel debe volver al estado "SISTEMA TODOS LOS SISTEMAS NORMALES".
 
 --------------------------------------------------------------------------------
 2. PRUEBA DE SIMULACIÓN FÍSICA (PANEL LATERAL DERECHO)
@@ -40,12 +40,12 @@ implementadas en el simulador interactivo del panel de incendio.
 [ ] INCENDIO (Fuego en Sensores):
     1. Haz clic en "🔥 INCENDIAR" (Z1 o Z2) o "✋ JALAR" (Z3).
     2. Observa la animación de fuego sobre el sensor.
-    3. El panel entrará en estado de FIRE ALARM, el zumbador sonará.
+    3. El panel entrará en estado de ALARMA INCENDIO, el zumbador sonará.
 
 [ ] MÚLTIPLES EVENTOS (Cola de Alarmas):
     1. Activa un incendio en "Z1: Humo Lab".
     2. Activa una falla con el botón "⚠️ ACTIVAR FALLA".
-    3. Reconoce ambas alarmas presionando "ACKNOWLEDGE".
+    3. Reconoce ambas alarmas presionando "RECONOCER PANTALLA".
     4. Usa las flechas "Arriba" y "Abajo" del teclado del panel para scrollear.
     5. Verifica que la pantalla alterne entre el evento de ALARMA y el de FALLA (Ej. 00001/00002).
 
@@ -60,33 +60,33 @@ implementadas en el simulador interactivo del panel de incendio.
 [ ] CONECTAR NUEVO DISPOSITIVO DINÁMICO:
     1. En el panel izquierdo, selecciona "Calor Term" del menú desplegable.
     2. Presiona "CONECTAR".
-    3. La pantalla del panel indicará "NEW DEVICE DETECTED" (Ej. L1D09 - HEAT DETECTOR).
+    3. La pantalla del panel indicará "NUEVO DISPOSITIVO DETECTADO" (Ej. L1D09 - DETECTOR CALOR).
 
 [ ] DESCONEXIÓN / SUCIO:
     1. Presiona "DESCONECTAR" (Nodo 12) o "ENSUCIAR" (Nodo 08).
-    2. Verifica que el panel dispare una alarma de "SYSTEM TROUBLE" con el mensaje respectivo.
+    2. Verifica que el panel dispare una alarma de "FALLA DEL SISTEMA" con el mensaje respectivo.
 
 --------------------------------------------------------------------------------
 4. PRUEBA DE MENÚS (NAVEGACIÓN INTERNA)
 --------------------------------------------------------------------------------
 Para entrar al menú, presiona la tecla "Enter" desde el estado normal.
 
-[ ] READ STATUS (Estado en Vivo):
-    1. Presiona "1" para ingresar a READ STATUS.
+[ ] ESTADO DE LECTURA (READ STATUS):
+    1. Presiona "1" para ingresar a ESTADO DE LECTURA.
     2. Usa las flechas "Arriba" y "Abajo" para navegar por la base de datos de sensores.
-    3. Verifica que se muestre el estado ("NORMAL" o "ALARM") y el valor ("0.0% / FT" o "85 C").
+    3. Verifica que se muestre el estado ("NORMAL" o "ALARMA") y el valor ("0.0% / FT" o "85 C").
     4. Debes ver al final de la lista el dispositivo nuevo que creaste en el paso 3.
     5. Presiona "ESC" para volver.
 
-[ ] PROGRAMMING (Nivel de Seguridad):
+[ ] PROGRAMACIÓN (Nivel de Seguridad):
     1. Presiona "2" para ingresar a PROG.
-    2. Teclea una contraseña falsa y presiona Enter -> Mostrará "ACCESS DENIED".
+    2. Teclea una contraseña falsa y presiona Enter -> Mostrará "ACCESO DENEGADO".
     3. Ingresa de nuevo y teclea "12345" + Enter -> Te dará acceso al menú Nivel 2.
-    4. Navega con los botones 1, 2 y 3 para ver los submenús de CBE, ZONES y TIMERS.
+    4. Navega con los botones 1, 2 y 3 para ver los submenús de CBE, ZONAS y TEMPORIZADORES.
     5. Presiona "ESC" para retroceder.
 
-[ ] HISTORY (Historial de Eventos):
-    1. Presiona "3" para ingresar a HISTORY.
+[ ] HISTORIAL (Historial de Eventos):
+    1. Presiona "3" para ingresar a HISTORIAL.
     2. Usa las flechas para leer los últimos eventos ocurridos con su hora exacta.
 
 --------------------------------------------------------------------------------

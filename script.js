@@ -183,7 +183,7 @@ function updateClock() {
     const y = now.getFullYear().toString().slice(-2);
     
     const timeStr = `${h.toString().padStart(2, '0')}:${m}${ampm} ${mo}/${d}/${y}   NFS2-640`;
-    actualizarPantalla("SYSTEM ALL SYSTEMS NORMAL", timeStr);
+    actualizarPantalla("SISTEMA TODOS LOS SISTEMAS NORMALES", timeStr);
 }
 
 // Helper: Actualizar valor físico en la base de datos del equipo
@@ -227,14 +227,14 @@ document.getElementById('btn-acknowledge').addEventListener('click', () => {
     
     if (eventActive && !estadoSistema.alarmasReconocidas) {
         estadoSistema.alarmasReconocidas = true;
-        actualizarPantalla("EVENTS ACKNOWLEDGED", "PANEL SILENCED // MONITORING STAGE");
+        actualizarPantalla("EVENTOS RECONOCIDOS", "PANEL SILENCIADO // ETAPA DE MONITOREO");
         estadoSistema.bloqueoPantalla = true;
         clearTimeout(timerEstadoVisual);
         timerEstadoVisual = setTimeout(evaluarEstadoVisual, 2000);
     } else if (estadoSistema.modoSimulacion === "DRILL") {
-        actualizarPantalla("DRILL IN PROGRESS", "ACKNOWLEDGED BY STATION OPERATOR");
+        actualizarPantalla("SIMULACRO EN PROGRESO", "RECONOCIDO POR EL OPERADOR");
     } else {
-        actualizarPantalla("NO NEW EVENTS TO ACKNOWLEDGE", "SYSTEM STATE: SAFE");
+        actualizarPantalla("SIN NUEVOS EVENTOS A RECONOCER", "ESTADO DEL SISTEMA: SEGURO");
         estadoSistema.bloqueoPantalla = true;
         clearTimeout(timerEstadoVisual);
         timerEstadoVisual = setTimeout(evaluarEstadoVisual, 2000);
@@ -247,12 +247,12 @@ document.getElementById('btn-signal-silence').addEventListener('click', () => {
     if (estadoSistema.alarmaActiva) {
         estadoSistema.senalesSilenciadas = true;
         leds.signalsSilenced.classList.add('active');
-        actualizarPantalla("SIGNALS SILENCED", "EVACUATION AUDIBLE DEVICES INHIBITED");
+        actualizarPantalla("SEÑALES SILENCIADAS", "DISPOSITIVOS DE EVACUACIÓN INHABILITADOS");
             estadoSistema.bloqueoPantalla = true;
             clearTimeout(timerEstadoVisual);
             timerEstadoVisual = setTimeout(evaluarEstadoVisual, 2000);
     } else {
-        actualizarPantalla("SIGNAL SILENCE INVALID", "NO ACTIVE ALARM TO INHIBIT");
+        actualizarPantalla("SILENCIO INVÁLIDO", "SIN ALARMA ACTIVA PARA INHIBIR");
             estadoSistema.bloqueoPantalla = true;
         clearTimeout(timerEstadoVisual);
         timerEstadoVisual = setTimeout(evaluarEstadoVisual, 2000);
@@ -265,7 +265,7 @@ document.getElementById('btn-system-reset').addEventListener('click', () => {
     limpiarSensoresVisuales();
     clearTimeout(timerEstadoVisual);
     estadoSistema.modoSimulacion = "RESET";
-    actualizarPantalla("SYSTEM RESET IN PROGRESS...", "CLEARING ALARM LOGS AND COILS");
+    actualizarPantalla("REINICIO DEL SISTEMA EN PROGRESO...", "LIMPIANDO REGISTROS Y BOBINAS");
     
     // Apagar variables de peligro
     estadoSistema.colaEventos = [];
@@ -292,7 +292,7 @@ document.getElementById('btn-drill').addEventListener('click', () => {
     estadoSistema.modoSimulacion = "DRILL";
     estadoSistema.alarmasReconocidas = false;
     leds.fireAlarm.classList.add('active');
-    actualizarPantalla("MANUAL DRILL ACTIVATED", "EVACUATE AREA IMMEDIATELY");
+    actualizarPantalla("SIMULACRO MANUAL ACTIVADO", "EVACUAR ÁREA DE INMEDIATO");
     buzzer.playContinuous();
 });
 
@@ -372,7 +372,7 @@ function manejarMenu(valor) {
         if (estadoSistema.modoSimulacion === "MENU_PROG_PASS") estadoSistema.modoSimulacion = "MENU_MAIN";
         else if (["MENU_PROG_CBE", "MENU_PROG_ZONES", "MENU_PROG_TIMERS"].includes(estadoSistema.modoSimulacion)) {
             estadoSistema.modoSimulacion = "MENU_PROG";
-            actualizarPantalla("PROGRAMMING MENU (LEVEL 2)", "1=CBE 2=ZONES 3=TIMERS");
+            actualizarPantalla("MENÚ DE PROGRAMACIÓN (NIVEL 2)", "1=CBE 2=ZONAS 3=TEMPORIZADORES");
             return;
         }
         else if (estadoSistema.modoSimulacion !== "MENU_MAIN") estadoSistema.modoSimulacion = "MENU_MAIN";
@@ -384,14 +384,14 @@ function manejarMenu(valor) {
         
         // Forzar repintado del menú principal al usar Escape
         if (estadoSistema.modoSimulacion === "MENU_MAIN") {
-            actualizarPantalla("MAIN MENU: 1=READ 2=PROG 3=HISTORY", "4=MAINTENANCE (ESC TO EXIT)");
+            actualizarPantalla("MENÚ PRINCIPAL: 1=LEER 2=PROG 3=HISTORIAL", "4=MANT (ESC PARA SALIR)");
             return;
         }
     }
     
     switch (estadoSistema.modoSimulacion) {
         case "MENU_MAIN":
-            actualizarPantalla("MAIN MENU: 1=READ 2=PROG 3=HISTORY", "4=MAINTENANCE (ESC TO EXIT)");
+            actualizarPantalla("MENÚ PRINCIPAL: 1=LEER 2=PROG 3=HISTORIAL", "4=MANT (ESC PARA SALIR)");
             if (valor === "1") {
                 estadoSistema.modoSimulacion = "MENU_READ";
                 estadoSistema.indiceReadStatus = 0;
@@ -399,14 +399,14 @@ function manejarMenu(valor) {
             } else if (valor === "2") {
                 estadoSistema.modoSimulacion = "MENU_PROG_PASS";
                 estadoSistema.bufferPassword = "";
-                actualizarPantalla("PROGRAMMING - ENTER PASSWORD:", "");
+                actualizarPantalla("PROGRAMACIÓN - INGRESE CONTRASEÑA:", "");
             } else if (valor === "3") {
                 estadoSistema.modoSimulacion = "MENU_HISTORY";
                 estadoSistema.indiceHistorialActual = 0;
                 mostrarHistorial();
             } else if (valor === "4") {
                 estadoSistema.modoSimulacion = "MENU_MAINT";
-                actualizarPantalla("MAINTENANCE (ESC TO GO BACK)", "BATTERY: 27.2V  /  CHARGER: OK");
+                actualizarPantalla("MANTENIMIENTO (ESC PARA VOLVER)", "BATERÍA: 27.2V  /  CARGADOR: OK");
             }
             break;
             
@@ -414,14 +414,14 @@ function manejarMenu(valor) {
             if (/[0-9]/.test(valor) && estadoSistema.bufferPassword.length < 5) {
                 estadoSistema.bufferPassword += valor;
                 const stars = "*".repeat(estadoSistema.bufferPassword.length);
-                actualizarPantalla("PROGRAMMING - ENTER PASSWORD:", stars);
+                actualizarPantalla("PROGRAMACIÓN - INGRESE CONTRASEÑA:", stars);
             } else if (valor === "Enter") {
                 if (estadoSistema.bufferPassword === "12345" || estadoSistema.bufferPassword === "00000") {
                     estadoSistema.modoSimulacion = "MENU_PROG";
-                    actualizarPantalla("PROGRAMMING MENU (LEVEL 2)", "1=CBE 2=ZONES 3=TIMERS");
+                    actualizarPantalla("MENÚ DE PROGRAMACIÓN (NIVEL 2)", "1=CBE 2=ZONAS 3=TEMP");
                 } else {
-                    actualizarPantalla("ACCESS DENIED", "INVALID PASSWORD");
-                    setTimeout(() => { if(estadoSistema.modoSimulacion === "MENU_PROG_PASS") actualizarPantalla("PROGRAMMING - ENTER PASSWORD:", ""); }, 2000);
+                    actualizarPantalla("ACCESO DENEGADO", "CONTRASEÑA INVÁLIDA");
+                    setTimeout(() => { if(estadoSistema.modoSimulacion === "MENU_PROG_PASS") actualizarPantalla("PROGRAMACIÓN - INGRESE CONTRASEÑA:", ""); }, 2000);
                     estadoSistema.bufferPassword = "";
                 }
             }
@@ -430,13 +430,13 @@ function manejarMenu(valor) {
         case "MENU_PROG":
             if (valor === "1") {
                 estadoSistema.modoSimulacion = "MENU_PROG_CBE";
-                actualizarPantalla("CBE PROGRAMMING (ESC TO GO BACK)", "EQUATION: Z01 = OR(L1M01, L1D05)");
+                actualizarPantalla("PROG CBE (ESC PARA VOLVER)", "ECUACIÓN: Z01 = OR(L1M01, L1D05)");
             } else if (valor === "2") {
                 estadoSistema.modoSimulacion = "MENU_PROG_ZONES";
-                actualizarPantalla("ZONE PROGRAMMING (ESC TO GO BACK)", "Z01: INTERIOR LAB // NORMAL");
+                actualizarPantalla("PROG ZONAS (ESC PARA VOLVER)", "Z01: LAB INTERIOR // NORMAL");
             } else if (valor === "3") {
                 estadoSistema.modoSimulacion = "MENU_PROG_TIMERS";
-                actualizarPantalla("TIMERS PROGRAMMING (ESC TO GO BACK)", "AUTO-SILENCE: 20 MIN  // WATERFLOW: 0s");
+                actualizarPantalla("PROG TEMPOR (ESC PARA VOLVER)", "AUTO-SILENCIO: 20MIN // FLUJO: 0s");
             }
             break;
             
@@ -464,7 +464,7 @@ function manejarMenu(valor) {
 
 function mostrarHistorial() {
     if (estadoSistema.historialEventos.length === 0) {
-        actualizarPantalla("HISTORY LOG EMPTY (ESC TO GO BACK)", "NO EVENTS RECORDED YET");
+        actualizarPantalla("HISTORIAL VACÍO (ESC PARA VOLVER)", "SIN EVENTOS REGISTRADOS");
         return;
     }
     const ev = estadoSistema.historialEventos[estadoSistema.indiceHistorialActual];
@@ -474,17 +474,17 @@ function mostrarHistorial() {
 
 function mostrarReadStatus() {
     if (db.devices.length === 0) {
-        actualizarPantalla("READ STATUS (ESC TO GO BACK)", "NO DEVICES CONFIGURED");
+        actualizarPantalla("ESTADO DE LECTURA (ESC PARA VOLVER)", "NINGÚN DISPOSITIVO CONFIGURADO");
         return;
     }
     const dev = db.devices[estadoSistema.indiceReadStatus];
     const count = `${estadoSistema.indiceReadStatus + 1}/${db.devices.length}`.padStart(5, '0');
     
     // Abreviar textos largos para que no superen el límite de 40 caracteres de la pantalla LCD
-    let tipoCorto = dev.tipo.replace("PHOTO SMOKE", "SMOKE").replace("HEAT DETECTOR", "HEAT").replace("PULL STATION", "PULL").replace("CONTROL MOD", "MOD");
-    let valCorto = dev.valor.replace("MAINTENANCE REQ", "MAINT REQ").replace("COMMUNICATION LOST", "COMM LOST");
+    let tipoCorto = dev.tipo.replace("PHOTO SMOKE", "HUMO").replace("HEAT DETECTOR", "CALOR").replace("PULL STATION", "MANUAL").replace("CONTROL MOD", "MOD");
+    let valCorto = dev.valor.replace("MAINTENANCE REQ", "MANT REQ").replace("COMMUNICATION LOST", "COMUN PERDIDA");
     
-    actualizarPantalla(`${count} ${dev.dir}: ${dev.etiqueta}`, `TYPE: ${tipoCorto} | ST: ${dev.estado} | ${valCorto}`);
+    actualizarPantalla(`${count} ${dev.dir}: ${dev.etiqueta}`, `TIPO: ${tipoCorto} | EST: ${dev.estado} | ${valCorto}`);
 }
 
 document.getElementById('btn-lower-case').addEventListener('click', () => {
@@ -597,27 +597,27 @@ function procesarComandoConsola(comando) {
 
     // Comando Especial 1: Activar Alarma de Incendio por Software
     if (cmdClean === "111" || cmdClean === "FIRE") {
-        agregarEvento("FIRE", "ZONE 00", "MANUAL FIRE COMMAND ISSUED");
+        agregarEvento("FIRE", "ZONA 00", "COMANDO DE INCENDIO MANUAL EMITIDO");
     }
     // Comando Especial 2: Deshabilitar un lazo/Punto (Point Disabled)
     else if (cmdClean === "DISABLE" || cmdClean === "000") {
-        agregarEvento("DISABLE", "LOOP 01 NODE 23", "POINT BYPASS COMMAND");
+        agregarEvento("DISABLE", "LAZO 01 NODO 23", "COMANDO DE DERIVACIÓN DE PUNTO");
     } 
     // Comando Especial 3: Provocar fallo de batería / sistema
     else if (cmdClean === "TROUBLE" || cmdClean === "999") {
-        agregarEvento("TROUBLE", "SYSTEM TROUBLE", "LOW BATTERY LEVEL DETECTED");
+        agregarEvento("TROUBLE", "FALLA DEL SISTEMA", "NIVEL DE BATERÍA BAJO DETECTADO");
     }
     // Comando Especial 4: Simular Pre-Alarma
     else if (cmdClean === "PREALARM") {
-        agregarEvento("PRE", "L1D23", "SMOKE DETECTOR PRE-ALARM WARNING");
+        agregarEvento("PRE", "L1D23", "ADVERTENCIA PRE-ALARMA DE HUMO");
     }
     // Comando Especial 5: Simular Supervisión
     else if (cmdClean === "SUPER") {
-        agregarEvento("SUPER", "BLDG 2", "VALVE TAMPER SWITCH");
+        agregarEvento("SUPER", "EDIF 2", "INTERRUPTOR DE MANIPULACIÓN DE VÁLVULA");
     }
     // Comando Especial 6: Simular Evento de Seguridad
     else if (cmdClean === "SEC") {
-        agregarEvento("SEC", "REAR EXIT", "DOOR FORCED OPEN");
+        agregarEvento("SEC", "SALIDA TRASERA", "PUERTA FORZADA ABIERTA");
     }
     // Comando Especial 7: CLEAR (Limpieza de registro)
     else if (cmdClean === "CLEAR") {
@@ -633,7 +633,7 @@ function procesarComandoConsola(comando) {
         estadoSistema.alarmasReconocidas = false;
         estadoSistema.senalesSilenciadas = false;
         estadoSistema.puntoDeshabilitado = false;
-        agregarEvento("INFO", "SYSTEM CLEARED", "ALL COILS AND ZONES RESET");
+        agregarEvento("INFO", "SISTEMA BORRADO", "TODAS LAS BOBINAS Y ZONAS RESTABLECIDAS");
     }
     // Comandos de Interfaz/Menú
     else if (cmdClean === "MENU" || cmdClean === "PROG") {
@@ -653,15 +653,15 @@ function procesarComandoConsola(comando) {
         estadoSistema.alarmasReconocidas = false;
         estadoSistema.senalesSilenciadas = false;
         estadoSistema.puntoDeshabilitado = false;
-        agregarEvento("INFO", "FACTORY RESET", "ALL DEVICES RESTORED TO DEFAULT");
+        agregarEvento("INFO", "REINICIO DE FÁBRICA", "TODOS LOS DISPOSITIVOS RESTABLECIDOS");
     }
     // Comando Especial 9: DELETE (Borrar dispositivo) Ej: DELETE L1D06
     else if (cmdClean.startsWith("DELETE ")) {
         const dir = cmdClean.split(" ")[1];
         if (db.remove(dir)) {
-            agregarEvento("INFO", "DEVICE DELETED", `${dir} REMOVED FROM SYSTEM`);
+            agregarEvento("INFO", "DISPOSITIVO ELIMINADO", `${dir} ELIMINADO DEL SISTEMA`);
         } else {
-            actualizarPantalla("COMMAND FAILED", `DEVICE ${dir} NOT FOUND`);
+            actualizarPantalla("COMANDO FALLIDO", `DISPOSITIVO ${dir} NO ENCONTRADO`);
             estadoSistema.bloqueoPantalla = true;
             clearTimeout(timerEstadoVisual);
             timerEstadoVisual = setTimeout(evaluarEstadoVisual, 2500);
@@ -673,9 +673,9 @@ function procesarComandoConsola(comando) {
         const dir = parts[1];
         const newName = parts.slice(2).join(" ");
         if (newName && db.rename(dir, newName)) {
-            agregarEvento("INFO", "DEVICE RENAMED", `${dir} NOW NAMED ${newName}`);
+            agregarEvento("INFO", "DISPOSITIVO RENOMBRADO", `${dir} AHORA NOMBRADO ${newName}`);
         } else {
-            actualizarPantalla("COMMAND FAILED", "INVALID FORMAT OR DEVICE NOT FOUND");
+            actualizarPantalla("COMANDO FALLIDO", "FORMATO INVÁLIDO O DISPOSITIVO NO ENCONTRADO");
             estadoSistema.bloqueoPantalla = true;
             clearTimeout(timerEstadoVisual);
             timerEstadoVisual = setTimeout(evaluarEstadoVisual, 2500);
@@ -683,7 +683,7 @@ function procesarComandoConsola(comando) {
     }
     // Comando no reconocido
     else {
-        actualizarPantalla("COMMAND NOT FOUND", "ERROR - INVALID ENTRY");
+        actualizarPantalla("COMANDO NO ENCONTRADO", "ERROR - ENTRADA INVÁLIDA");
         estadoSistema.bloqueoPantalla = true;
         clearTimeout(timerEstadoVisual);
         timerEstadoVisual = setTimeout(evaluarEstadoVisual, 2500);
