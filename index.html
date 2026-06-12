@@ -20,12 +20,12 @@
                         <span class="icon" style="font-size: 14px;">🔌</span>
                     </div>
                     <div class="sensor-controls">
-                    <span class="sensor-name">Nuevo Dispositivo</span>
-                    <select id="new-device-type" class="device-select">
-                        <option value="PHOTO SMOKE">Humo  </option>
-                        <option value="HEAT DETECTOR">Calor Term </option>
-                        <option value="PULL STATION">Est. Manual </option>
-                    </select>
+                        <span class="sensor-name">Nuevo Dispositivo</span>
+                        <select id="new-device-type" class="device-select">
+                            <option value="PHOTO SMOKE">Humo</option>
+                            <option value="HEAT DETECTOR">Calor Term</option>
+                            <option value="PULL STATION">Est. Manual</option>
+                        </select>
                         <button class="trigger-btn device-btn" id="btn-sim-connect">CONECTAR</button>
                     </div>
                 </div>
@@ -36,8 +36,12 @@
                         <span class="icon" style="position:absolute; top: -5px; font-size: 18px; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">✂️</span>
                     </div>
                     <div class="sensor-controls">
-                        <span class="sensor-name">Nodo 12 (Falla)</span>
-                        <button class="trigger-btn trouble-btn" id="btn-sim-disconnect">DESCONECTAR</button>
+                        <span class="sensor-name">Estado de Conexión</span>
+                        <select id="disconnect-device-select" class="device-select"></select>
+                        <div style="display: flex; gap: 4px; width: 100%;">
+                            <button class="trigger-btn trouble-btn" id="btn-sim-disconnect" style="flex: 1;">FALLA</button>
+                            <button class="trigger-btn device-btn" id="btn-sim-reconnect" style="flex: 1;">NORMAL</button>
+                        </div>
                     </div>
                 </div>
                 <!-- Dispositivo 3: Sensor Sucio -->
@@ -47,8 +51,12 @@
                         <span class="dust-fx">🌫️</span>
                     </div>
                     <div class="sensor-controls">
-                        <span class="sensor-name">Nodo 08 (Sucio)</span>
-                        <button class="trigger-btn dirty-btn" id="btn-sim-dirty">ENSUCIAR</button>
+                        <span class="sensor-name">Mantenimiento Sensor</span>
+                        <select id="dirty-device-select" class="device-select"></select>
+                        <div style="display: flex; gap: 4px; width: 100%;">
+                            <button class="trigger-btn dirty-btn" id="btn-sim-dirty" style="flex: 1;">SUCIO</button>
+                            <button class="trigger-btn device-btn" id="btn-sim-clean" style="flex: 1;">LIMPIO</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -66,7 +74,7 @@
             <div class="lcd-display-bezel">
                 <div class="lcd-display">
                     <div class="lcd-text" id="lcd-text">
-                        Pantalla LCD (2x40) - 80 caracteres de cristal líquido
+                        Pantalla LCD (2x54) - 108 caracteres de cristal líquido
                         <span class="cursor"></span>
                     </div>
                 </div>
@@ -204,14 +212,14 @@
             <h3>SIMULACIÓN FÍSICA</h3>
             <div class="interactive-sensors">
                 <!-- Sensor 1: Humo -->
-                <div class="sensor-module" id="module-1">
+                <div class="sensor-module pre-alarm" id="module-1">
                     <div class="sensor-graphic dome">
                         <div class="dome-center"></div>
-                        <div class="flame-fx">🔥</div>
+                        <div class="flame-fx">💨</div>
                     </div>
                     <div class="sensor-controls">
                         <span class="sensor-name">Z1: Humo Lab</span>
-                        <button class="trigger-btn" id="btn-trigger-1">🔥 INCENDIAR</button>
+                        <button class="trigger-btn pre-alarm-btn" id="btn-trigger-1">💨 PRE-ALARMA</button>
                     </div>
                 </div>
                 <!-- Sensor 2: Calor -->

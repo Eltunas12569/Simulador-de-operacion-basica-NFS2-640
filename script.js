@@ -36,7 +36,7 @@ let estadoSistema = {
     senalesSilenciadas: false,
     problemaSistema: false,
     puntoDeshabilitado: false,
-    modoSimulacion: "NORMAL", // NORMAL, LAMP_TEST, DRILL, RESET, MENU_MAIN, MENU_READ, MENU_PROG_PASS, MENU_PROG, MENU_PROG_CBE, MENU_PROG_ZONES, MENU_PROG_TIMERS, MENU_MAINT, MENU_HISTORY
+    modoSimulacion: "NORMAL", // NORMAL, LAMP_TEST, DRILL, RESET, MENU_MAIN, MENU_READ, MENU_PROG_PASS, MENU_PROG, MENU_PROG_AUTO, MENU_PROG_POINT, MENU_PROG_PASSW, MENU_PROG_MSG, MENU_PROG_ZONES, MENU_PROG_CBE, MENU_PROG_SYS, MENU_PROG_SPL, MENU_PROG_NET, MENU_MAINT, MENU_HISTORY
     textoBúfer: "",
     isLowerCase: false,
     bloqueoPantalla: false,
@@ -57,8 +57,12 @@ let timerEstadoVisual = null;
 function agregarEvento(tipo, mainMsg, subMsg) {
     const now = new Date();
     const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const mo = (now.getMonth() + 1).toString().padStart(2, '0');
+    const d = now.getDate().toString().padStart(2, '0');
+    const y = now.getFullYear().toString().slice(-2);
+    const dateStr = `${d}/${mo}/${y}`;
     
-    const evento = { tipo, mainMsg, subMsg, timeStr };
+    const evento = { tipo, mainMsg, subMsg, timeStr, dateStr };
     
     // 1. Agregar a Memoria Histórica
     estadoSistema.historialEventos.unshift(evento);
@@ -137,15 +141,15 @@ const buzzer = {
 document.body.addEventListener('click', () => buzzer.initAudio(), { once: true });
 
 // ==========================================================================
-// NÚCLEO DE RENDERIZADO DE PANTALLA (Formato estricto de 2 filas x 40 caracteres)
+// NÚCLEO DE RENDERIZADO DE PANTALLA (Formato estricto de 2 filas x 54 caracteres)
 // ==========================================================================
 function actualizarPantalla(fila1, fila2 = "") {
     // Limpiar pantalla manteniendo el cursor
     lcdContainer.innerHTML = "";
     
-    // Formatear texto cortando strings si exceden los 40 caracteres reglamentarios
-    const f1 = fila1.substring(0, 40);
-    const f2 = fila2.substring(0, 40);
+    // Formatear texto cortando strings si exceden los 54 caracteres reglamentarios
+    const f1 = fila1.substring(0, 54);
+    const f2 = fila2.substring(0, 54);
     
     const textoCompleto = `${f1}\n${f2}`;
     
@@ -182,7 +186,7 @@ function updateClock() {
     const d = now.getDate().toString().padStart(2, '0');
     const y = now.getFullYear().toString().slice(-2);
     
-    const timeStr = `${h.toString().padStart(2, '0')}:${m}${ampm} ${mo}/${d}/${y}   NFS2-640`;
+    const timeStr = `${h.toString().padStart(2, '0')}:${m}${ampm} ${d}/${mo}/${y}   NFS2-640`;
     actualizarPantalla("SISTEMA TODOS LOS SISTEMAS NORMALES", timeStr);
 }
 
@@ -208,7 +212,7 @@ document.getElementById('btn-lamp-test').addEventListener('click', () => {
     Object.values(leds).forEach(led => led.classList.add('active'));
     
     // Llenar matriz de LCD para probar píxeles
-    actualizarPantalla("########################################", "########################################");
+    actualizarPantalla("######################################################", "######################################################");
     
     // Volver automáticamente al estado anterior tras el conteo eléctrico
     setTimeout(() => {
@@ -348,9 +352,15 @@ function evaluarEstadoVisual() {
         else if (ev.tipo === "PRE") prefix = "PREALARM";
         else if (ev.tipo === "DISABLE") prefix = "DISABLE";
         
-        const pantallaMsg = `${counter} ${prefix}: ${ev.mainMsg}`.substring(0, 40);
+        const pantallaMsg = `${counter} ${prefix}: ${ev.mainMsg}`.substring(0, 54);
         
-        actualizarPantalla(pantallaMsg, ev.subMsg);
+        let displaySubMsg = ev.subMsg;
+        // Adjuntamos la fecha y hora a la visualización de todos los incidentes
+        if (ev.dateStr) {
+            displaySubMsg = `${ev.subMsg} [${ev.dateStr} ${ev.timeStr}]`;
+        }
+        
+        actualizarPantalla(pantallaMsg, displaySubMsg.substring(0, 54));
         
         if (soundNeeded && !estadoSistema.alarmasReconocidas) {
             if (!buzzer.oscillator) buzzer.playContinuous();
@@ -370,9 +380,9 @@ function evaluarEstadoVisual() {
 function manejarMenu(valor) {
     if (valor === "Escape") {
         if (estadoSistema.modoSimulacion === "MENU_PROG_PASS") estadoSistema.modoSimulacion = "MENU_MAIN";
-        else if (["MENU_PROG_CBE", "MENU_PROG_ZONES", "MENU_PROG_TIMERS"].includes(estadoSistema.modoSimulacion)) {
+        else if (["MENU_PROG_AUTO", "MENU_PROG_POINT", "MENU_PROG_PASSW", "MENU_PROG_MSG", "MENU_PROG_ZONES", "MENU_PROG_CBE", "MENU_PROG_SYS", "MENU_PROG_SPL", "MENU_PROG_NET"].includes(estadoSistema.modoSimulacion)) {
             estadoSistema.modoSimulacion = "MENU_PROG";
-            actualizarPantalla("MENÚ DE PROGRAMACIÓN (NIVEL 2)", "1=CBE 2=ZONAS 3=TEMPORIZADORES");
+            actualizarPantalla("PROG: 1=AUTO 2=PUNTO 3=CLAVE 4=MENS 5=ZONAS 6=CBE", "7=SIST 8=ZON ESP 9=RED (ESC PARA SALIR)");
             return;
         }
         else if (estadoSistema.modoSimulacion !== "MENU_MAIN") estadoSistema.modoSimulacion = "MENU_MAIN";
@@ -416,9 +426,9 @@ function manejarMenu(valor) {
                 const stars = "*".repeat(estadoSistema.bufferPassword.length);
                 actualizarPantalla("PROGRAMACIÓN - INGRESE CONTRASEÑA:", stars);
             } else if (valor === "Enter") {
-                if (estadoSistema.bufferPassword === "12345" || estadoSistema.bufferPassword === "00000") {
+                if (estadoSistema.bufferPassword === "00000") {
                     estadoSistema.modoSimulacion = "MENU_PROG";
-                    actualizarPantalla("MENÚ DE PROGRAMACIÓN (NIVEL 2)", "1=CBE 2=ZONAS 3=TEMP");
+                    actualizarPantalla("PROG: 1=AUTO 2=PUNTO 3=CLAVE 4=MENS 5=ZONAS 6=CBE", "7=SIST 8=ZON ESP 9=RED (ESC PARA SALIR)");
                 } else {
                     actualizarPantalla("ACCESO DENEGADO", "CONTRASEÑA INVÁLIDA");
                     setTimeout(() => { if(estadoSistema.modoSimulacion === "MENU_PROG_PASS") actualizarPantalla("PROGRAMACIÓN - INGRESE CONTRASEÑA:", ""); }, 2000);
@@ -429,14 +439,32 @@ function manejarMenu(valor) {
             
         case "MENU_PROG":
             if (valor === "1") {
-                estadoSistema.modoSimulacion = "MENU_PROG_CBE";
-                actualizarPantalla("PROG CBE (ESC PARA VOLVER)", "ECUACIÓN: Z01 = OR(L1M01, L1D05)");
+                estadoSistema.modoSimulacion = "MENU_PROG_AUTO";
+                actualizarPantalla("AUTOPROGRAMACION EN CURSO (ESC PARA CANCELAR)", "ESCANEANDO DISPOSITIVOS EN EL LAZO 1...");
             } else if (valor === "2") {
-                estadoSistema.modoSimulacion = "MENU_PROG_ZONES";
-                actualizarPantalla("PROG ZONAS (ESC PARA VOLVER)", "Z01: LAB INTERIOR // NORMAL");
+                estadoSistema.modoSimulacion = "MENU_PROG_POINT";
+                actualizarPantalla("PROGRAMACION DE PUNTOS (ESC PARA VOLVER)", "INTRODUZCA DIRECCION (EJ. L1D01) Y PRESIONE ENTER:");
             } else if (valor === "3") {
-                estadoSistema.modoSimulacion = "MENU_PROG_TIMERS";
-                actualizarPantalla("PROG TEMPOR (ESC PARA VOLVER)", "AUTO-SILENCIO: 20MIN // FLUJO: 0s");
+                estadoSistema.modoSimulacion = "MENU_PROG_PASSW";
+                actualizarPantalla("CAMBIO DE CONTRASEÑA (ESC PARA VOLVER)", "INTRODUZCA NUEVA CLAVE MAESTRA:");
+            } else if (valor === "4") {
+                estadoSistema.modoSimulacion = "MENU_PROG_MSG";
+                actualizarPantalla("MENSAJES PERSONALIZADOS (ESC PARA VOLVER)", "INTRODUZCA DIRECCION DEL DISPOSITIVO:");
+            } else if (valor === "5") {
+                estadoSistema.modoSimulacion = "MENU_PROG_ZONES";
+                actualizarPantalla("PROG ZONAS (ESC PARA VOLVER)", "Z01: LAB INTERIOR // ASIGNADOS: L1D01, L1D02");
+            } else if (valor === "6") {
+                estadoSistema.modoSimulacion = "MENU_PROG_CBE";
+                actualizarPantalla("PROG CBE - ECUACIONES (ESC PARA VOLVER)", "Z01 = OR(L1M01, L1D05)");
+            } else if (valor === "7") {
+                estadoSistema.modoSimulacion = "MENU_PROG_SYS";
+                actualizarPantalla("PROG SISTEMA (ESC PARA VOLVER)", "AUTO-SILENCIO: 20MIN // RETARDO ALARMA: 0s");
+            } else if (valor === "8") {
+                estadoSistema.modoSimulacion = "MENU_PROG_SPL";
+                actualizarPantalla("PROG ZONAS ESPECIALES (ESC PARA VOLVER)", "ZR01: DESCARGA CRUZADA // ESTADO: INACTIVO");
+            } else if (valor === "9") {
+                estadoSistema.modoSimulacion = "MENU_PROG_NET";
+                actualizarPantalla("PROG RED NOTI-FIRE-NET (ESC PARA VOLVER)", "NODO LOCAL: 01 // MAPEO DE ZONAS: GLOBAL");
             }
             break;
             
@@ -469,7 +497,8 @@ function mostrarHistorial() {
     }
     const ev = estadoSistema.historialEventos[estadoSistema.indiceHistorialActual];
     const count = `${estadoSistema.indiceHistorialActual + 1}/${estadoSistema.historialEventos.length}`;
-    actualizarPantalla(`HIST ${count} [${ev.timeStr}] ${ev.tipo}`, `${ev.mainMsg} / ${ev.subMsg}`.substring(0,40));
+    const historyTime = ev.dateStr ? `${ev.dateStr} ${ev.timeStr}` : ev.timeStr;
+    actualizarPantalla(`HIST ${count} [${historyTime}] ${ev.tipo}`.substring(0, 54), `${ev.mainMsg} / ${ev.subMsg}`.substring(0,54));
 }
 
 function mostrarReadStatus() {
@@ -480,7 +509,7 @@ function mostrarReadStatus() {
     const dev = db.devices[estadoSistema.indiceReadStatus];
     const count = `${estadoSistema.indiceReadStatus + 1}/${db.devices.length}`.padStart(5, '0');
     
-    // Abreviar textos largos para que no superen el límite de 40 caracteres de la pantalla LCD
+    // Abreviar textos largos para que no superen el límite de 54 caracteres de la pantalla LCD
     let tipoCorto = dev.tipo.replace("PHOTO SMOKE", "HUMO").replace("HEAT DETECTOR", "CALOR").replace("PULL STATION", "MANUAL").replace("CONTROL MOD", "MOD");
     let valCorto = dev.valor.replace("MAINTENANCE REQ", "MANT REQ").replace("COMMUNICATION LOST", "COMUN PERDIDA");
     
@@ -570,7 +599,7 @@ teclasMecanicas.forEach(tecla => {
         }
 
         // Agregar carácter al búfer de comandos (Límite visual de una línea)
-        if (estadoSistema.textoBúfer.length < 25) {
+        if (estadoSistema.textoBúfer.length < 52) { // 54 caracteres totales menos el prefijo "> "
             estadoSistema.textoBúfer += charToAdd;
             actualizarPantalla("CONSOLA CMD:", `> ${estadoSistema.textoBúfer}`);
         }
@@ -601,11 +630,11 @@ function procesarComandoConsola(comando) {
     }
     // Comando Especial 2: Deshabilitar un lazo/Punto (Point Disabled)
     else if (cmdClean === "DISABLE" || cmdClean === "000") {
-        agregarEvento("DISABLE", "LAZO 01 NODO 23", "COMANDO DE DERIVACIÓN DE PUNTO");
+        agregarEvento("DISABLE", "L1D23 LAZO 01", "COMANDO DE DERIVACION DE PUNTO");
     } 
     // Comando Especial 3: Provocar fallo de batería / sistema
     else if (cmdClean === "TROUBLE" || cmdClean === "999") {
-        agregarEvento("TROUBLE", "FALLA DEL SISTEMA", "NIVEL DE BATERÍA BAJO DETECTADO");
+        agregarEvento("TROUBLE", "FALLA DE BATERIA", "UBIC: PANEL PRINCIPAL");
     }
     // Comando Especial 4: Simular Pre-Alarma
     else if (cmdClean === "PREALARM") {
@@ -613,11 +642,11 @@ function procesarComandoConsola(comando) {
     }
     // Comando Especial 5: Simular Supervisión
     else if (cmdClean === "SUPER") {
-        agregarEvento("SUPER", "EDIF 2", "INTERRUPTOR DE MANIPULACIÓN DE VÁLVULA");
+        agregarEvento("SUPER", "L1M06 EDIF 2", "INTERRUPTOR DE MANIPULACION DE VALVULA");
     }
     // Comando Especial 6: Simular Evento de Seguridad
     else if (cmdClean === "SEC") {
-        agregarEvento("SEC", "SALIDA TRASERA", "PUERTA FORZADA ABIERTA");
+        agregarEvento("SEC", "L1M07 SALIDA TRASERA", "PUERTA FORZADA ABIERTA");
     }
     // Comando Especial 7: CLEAR (Limpieza de registro)
     else if (cmdClean === "CLEAR") {
@@ -654,12 +683,14 @@ function procesarComandoConsola(comando) {
         estadoSistema.senalesSilenciadas = false;
         estadoSistema.puntoDeshabilitado = false;
         agregarEvento("INFO", "REINICIO DE FÁBRICA", "TODOS LOS DISPOSITIVOS RESTABLECIDOS");
+        actualizarSelectsDispositivos();
     }
     // Comando Especial 9: DELETE (Borrar dispositivo) Ej: DELETE L1D06
     else if (cmdClean.startsWith("DELETE ")) {
         const dir = cmdClean.split(" ")[1];
         if (db.remove(dir)) {
             agregarEvento("INFO", "DISPOSITIVO ELIMINADO", `${dir} ELIMINADO DEL SISTEMA`);
+            actualizarSelectsDispositivos();
         } else {
             actualizarPantalla("COMANDO FALLIDO", `DISPOSITIVO ${dir} NO ENCONTRADO`);
             estadoSistema.bloqueoPantalla = true;
@@ -674,6 +705,7 @@ function procesarComandoConsola(comando) {
         const newName = parts.slice(2).join(" ");
         if (newName && db.rename(dir, newName)) {
             agregarEvento("INFO", "DISPOSITIVO RENOMBRADO", `${dir} AHORA NOMBRADO ${newName}`);
+            actualizarSelectsDispositivos();
         } else {
             actualizarPantalla("COMANDO FALLIDO", "FORMATO INVÁLIDO O DISPOSITIVO NO ENCONTRADO");
             estadoSistema.bloqueoPantalla = true;
@@ -726,6 +758,25 @@ document.addEventListener('keydown', (event) => {
 // PANELES LATERALES DE SIMULACIÓN (MECANISMOS EXTERNOS)
 // ==========================================================================
 
+function actualizarSelectsDispositivos() {
+    const selectDisconnect = document.getElementById('disconnect-device-select');
+    const selectDirty = document.getElementById('dirty-device-select');
+    
+    if (selectDisconnect) {
+        selectDisconnect.innerHTML = '';
+        db.devices.forEach(d => {
+            selectDisconnect.add(new Option(`${d.dir} - ${d.etiqueta}`, d.dir));
+        });
+    }
+    
+    if (selectDirty) {
+        selectDirty.innerHTML = '';
+        db.devices.filter(d => d.tipo.includes("SMOKE")).forEach(d => {
+            selectDirty.add(new Option(`${d.dir} - ${d.etiqueta}`, d.dir));
+        });
+    }
+}
+
 document.getElementById('btn-sim-connect').addEventListener('click', () => {
     if (estadoSistema.modoSimulacion.startsWith("MENU")) estadoSistema.modoSimulacion = "NORMAL";
     
@@ -756,18 +807,76 @@ document.getElementById('btn-sim-connect').addEventListener('click', () => {
     db.add(newDev); // Guarda el dispositivo y persiste
     
     agregarEvento("INFO", "NEW DEVICE DETECTED", `${newDir} - ${selectedType}`);
+    actualizarSelectsDispositivos();
 });
 
 document.getElementById('btn-sim-disconnect').addEventListener('click', () => {
     if (estadoSistema.modoSimulacion.startsWith("MENU")) estadoSistema.modoSimulacion = "NORMAL";
-    actualizarEstadoDispositivo("L1M12", "TROUBLE", "COMMUNICATION LOST");
-    agregarEvento("TROUBLE", "MISSING DEVICE", "NODE 12 DISCONNECTED");
+    
+    const select = document.getElementById('disconnect-device-select');
+    const dir = select ? select.value : null;
+    
+    if (dir) {
+        const dirUpper = dir.toUpperCase().trim();
+        const dev = db.devices.find(d => d.dir === dirUpper);
+        if (dev) {
+            actualizarEstadoDispositivo(dirUpper, "TROUBLE", "COMUN PERDIDA");
+            agregarEvento("TROUBLE", "DISPOSITIVO PERDIDO", `UBIC: ${dirUpper} ${dev.etiqueta}`);
+        } else {
+            alert("Dispositivo no encontrado.");
+        }
+    }
+});
+
+document.getElementById('btn-sim-reconnect').addEventListener('click', () => {
+    if (estadoSistema.modoSimulacion.startsWith("MENU")) estadoSistema.modoSimulacion = "NORMAL";
+    
+    const select = document.getElementById('disconnect-device-select');
+    const dir = select ? select.value : null;
+    
+    if (dir) {
+        const dirUpper = dir.toUpperCase().trim();
+        const dev = db.devices.find(d => d.dir === dirUpper);
+        if (dev) {
+            const defaultVal = dev.tipo.includes("SMOKE") ? "0.0% / FT" : (dev.tipo.includes("HEAT") ? "25 C" : "NORMAL");
+            actualizarEstadoDispositivo(dirUpper, "NORMAL", defaultVal);
+            agregarEvento("INFO", "DISPOSITIVO RESTAURADO", `UBIC: ${dirUpper} ${dev.etiqueta} EN LINEA`);
+        }
+    }
 });
 
 document.getElementById('btn-sim-dirty').addEventListener('click', () => {
     if (estadoSistema.modoSimulacion.startsWith("MENU")) estadoSistema.modoSimulacion = "NORMAL";
-    actualizarEstadoDispositivo("L1D08", "TROUBLE", "MAINTENANCE REQ");
-    agregarEvento("TROUBLE", "DIRTY SENSOR", "NODE 08 MAINTENANCE REQ");
+    
+    const select = document.getElementById('dirty-device-select');
+    const dir = select ? select.value : null;
+    
+    if (dir) {
+        const dirUpper = dir.toUpperCase().trim();
+        const dev = db.devices.find(d => d.dir === dirUpper && d.tipo.includes("SMOKE"));
+        if (dev) {
+            actualizarEstadoDispositivo(dirUpper, "TROUBLE", "MANT REQ");
+            agregarEvento("TROUBLE", "SENSOR SUCIO", `UBIC: ${dirUpper} ${dev.etiqueta}`);
+        } else {
+            alert("Sensor de humo no válido o no encontrado.");
+        }
+    }
+});
+
+document.getElementById('btn-sim-clean').addEventListener('click', () => {
+    if (estadoSistema.modoSimulacion.startsWith("MENU")) estadoSistema.modoSimulacion = "NORMAL";
+    
+    const select = document.getElementById('dirty-device-select');
+    const dir = select ? select.value : null;
+    
+    if (dir) {
+        const dirUpper = dir.toUpperCase().trim();
+        const dev = db.devices.find(d => d.dir === dirUpper && d.tipo.includes("SMOKE"));
+        if (dev) {
+            actualizarEstadoDispositivo(dirUpper, "NORMAL", "0.0% / FT");
+            agregarEvento("INFO", "SENSOR LIMPIADO", `UBIC: ${dirUpper} ${dev.etiqueta} LIMPIO`);
+        }
+    }
 });
 
 function activarSensor(zone) {
@@ -775,14 +884,14 @@ function activarSensor(zone) {
     modulo.classList.add('active'); // Muestra la flama
 
     if (zone === 1) {
-        actualizarEstadoDispositivo("L1D01", "ALARM", "9.8% / FT");
-        agregarEvento("FIRE", "ZONE 01", "DETECTOR SMOKE INTERIOR LAB");
+        actualizarEstadoDispositivo("L1D01", "PREALARM", "3.5% / FT");
+        agregarEvento("PRE", "L1D01 ZONA 01", "PRE-ALARMA HUMO LAB INTERIOR");
     } else if (zone === 2) {
         actualizarEstadoDispositivo("L1D02", "ALARM", "85 C");
-        agregarEvento("FIRE", "ZONE 02", "HEAT DETECTOR MAIN OFFICES");
+        agregarEvento("FIRE", "L1D02 ZONA 02", "DETECTOR CALOR OFICINAS PRINC");
     } else if (zone === 3) {
         actualizarEstadoDispositivo("L1M03", "ALARM", "ACTIVATED");
-        agregarEvento("FIRE", "ZONE 03", "PULL STATION WAREHOUSE EXIT");
+        agregarEvento("FIRE", "L1M03 ZONA 03", "ESTACION MANUAL SALIDA ALMACEN");
     }
 }
 
@@ -803,4 +912,5 @@ document.getElementById('btn-sim-clear').addEventListener('click', () => {
 });
 
 // Arrancar el simulador
+actualizarSelectsDispositivos();
 inicializarPanel();

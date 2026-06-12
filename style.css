@@ -35,7 +35,7 @@ body {
     flex-direction: column;
     gap: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    width: 200px; /* Ampliamos un poco para los nuevos gráficos */
+    width: 240px; /* Ampliado para alojar mejor los selectores de dispositivo */
 }
 
 .side-panel h3 {
@@ -111,6 +111,11 @@ body {
 .sensor-module.active {
     border-color: #e74c3c;
     box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+
+.sensor-module.pre-alarm.active {
+    border-color: #f39c12;
+    box-shadow: 0 0 8px rgba(243, 156, 18, 0.4);
 }
 
 .sensor-graphic {
@@ -231,6 +236,9 @@ body {
 .trigger-btn.trouble-btn { background: linear-gradient(to bottom, #e67e22, #d35400); border: 1px solid #873600; box-shadow: 0 2px 0 #873600; }
 .trigger-btn.trouble-btn:active { box-shadow: 0 0 0 #873600; background: #a04000; }
 
+.trigger-btn.pre-alarm-btn { background: linear-gradient(to bottom, #f1c40f, #f39c12); border: 1px solid #b9770e; box-shadow: 0 2px 0 #b9770e; color: #111; }
+.trigger-btn.pre-alarm-btn:active { box-shadow: 0 0 0 #b9770e; background: #d68910; }
+
 .trigger-btn.dirty-btn { background: linear-gradient(to bottom, #95a5a6, #7f8c8d); border: 1px solid #4d5656; box-shadow: 0 2px 0 #4d5656; }
 .trigger-btn.dirty-btn:active { box-shadow: 0 0 0 #4d5656; background: #616a6b; }
 
@@ -242,8 +250,8 @@ body {
 }
 
 /* Textos y botón del detector */
-.sensor-controls { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
-.sensor-name { font-size: 9px; color: #ecf0f1; font-weight: bold; line-height: 1.1; }
+.sensor-controls { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; min-width: 0; }
+.sensor-name { font-size: 9px; color: #ecf0f1; font-weight: bold; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .trigger-btn { background: linear-gradient(to bottom, #e74c3c, #c0392b); border: 1px solid #801515; color: white; font-size: 9px; font-weight: bold; padding: 5px 0; border-radius: 3px; cursor: pointer; box-shadow: 0 2px 0 #5c0f0f; text-align: center; transition: all 0.1s; }
 .trigger-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #5c0f0f; background: #a83226; }
 
@@ -254,8 +262,10 @@ body {
     border: 1px solid #2c3e50;
     border-radius: 3px;
     font-size: 9px;
-    padding: 3px;
+    padding: 4px;
     outline: none;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Chasis exterior metálico gris */
@@ -340,14 +350,14 @@ body {
 
 .lcd-text {
     font-family: 'Courier New', Courier, monospace;
-    font-size: 18px; /* Reducido ligeramente de 19px a 17px para emular los caracteres de matriz de puntos */
+    font-size: 18px; /* Restaurado al tamaño original para permitir más texto */
     font-weight: bold;
     color: #0b1405;
     text-shadow: 1px 1px 0px rgba(132, 168, 50, 0.4);
     letter-spacing: 0.8px;
     line-height: 1.4;
     white-space: pre-wrap; /* Respeta los saltos de línea (\n) del script */
-    word-break: break-word; /* Si una palabra es demasiado larga, la corta para que no rompa el contenedor */
+    word-break: break-all; /* Emula una matriz real cortando la palabra al chocar con el borde */
     width: 100%;
     max-height: 100%;
 }
@@ -431,11 +441,11 @@ body {
 #led-fire-alarm, #led-pre-alarm, #led-pre-discharge, #led-discharge { background-color: #4a1111; }
 #led-fire-alarm.active, #led-pre-alarm.active, #led-pre-discharge.active, #led-discharge.active { background-color: #ff3333; box-shadow: 0 0 10px #ff3333, inset 0 1px 2px rgba(255, 255, 255, 0.8); border-color: #ff3333; }
 
-#led-supervisory, #led-system-trouble, #led-signals-silenced, #led-point-disabled, #led-abort-active { background-color: #4a3e0b; }
-#led-supervisory.active, #led-system-trouble.active, #led-signals-silenced.active, #led-point-disabled.active, #led-abort-active.active { background-color: #ffcc00; box-shadow: 0 0 10px #ffcc00, inset 0 1px 2px rgba(255, 255, 255, 0.8); border-color: #ffcc00; }
+#led-system-trouble, #led-signals-silenced, #led-point-disabled, #led-abort-active { background-color: #4a3e0b; }
+#led-system-trouble.active, #led-signals-silenced.active, #led-point-disabled.active, #led-abort-active.active { background-color: #ffcc00; box-shadow: 0 0 10px #ffcc00, inset 0 1px 2px rgba(255, 255, 255, 0.8); border-color: #ffcc00; }
 
-#led-security { background-color: #0b224a; }
-#led-security.active { background-color: #3388ff; box-shadow: 0 0 10px #3388ff, inset 0 1px 2px rgba(255, 255, 255, 0.8); border-color: #3388ff; }
+#led-security, #led-supervisory { background-color: #0b224a; }
+#led-security.active, #led-supervisory.active { background-color: #3388ff; box-shadow: 0 0 10px #3388ff, inset 0 1px 2px rgba(255, 255, 255, 0.8); border-color: #3388ff; }
 
 /* ==========================================================================
    5. BOTONES DE CONTROL PRINCIPALES (Gris Claro)

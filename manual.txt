@@ -81,8 +81,10 @@ Para entrar al menú, presiona la tecla "Enter" desde el estado normal.
 [ ] PROGRAMACIÓN (Nivel de Seguridad):
     1. Presiona "2" para ingresar a PROG.
     2. Teclea una contraseña falsa y presiona Enter -> Mostrará "ACCESO DENEGADO".
-    3. Ingresa de nuevo y teclea "12345" + Enter -> Te dará acceso al menú Nivel 2.
-    4. Navega con los botones 1, 2 y 3 para ver los submenús de CBE, ZONAS y TEMPORIZADORES.
+    3. Ingresa de nuevo y teclea "00000" + Enter -> Te dará acceso al menú Nivel 2.
+    4. Navega con los botones numéricos del 1 al 9 para explorar las distintas
+       funciones de programación (Autoprogramación, Puntos, Contraseña, Mensajes, 
+       Zonas, CBE, Sistema, Zonas Especiales, Red).
     5. Presiona "ESC" para retroceder.
 
 [ ] HISTORIAL (Historial de Eventos):
